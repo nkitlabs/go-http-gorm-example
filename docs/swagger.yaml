@@ -1,0 +1,243 @@
+basePath: /api/v1
+definitions:
+  db.Pagination:
+    properties:
+      limit:
+        example: 10
+        type: integer
+      page:
+        example: 1
+        type: integer
+      sort:
+        example: Id desc
+        type: string
+      total_pages:
+        example: 10
+        type: integer
+      total_rows:
+        example: 100
+        type: integer
+    type: object
+  errors.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  types.AddBookRequest:
+    properties:
+      author:
+        example: John Doe
+        type: string
+      description:
+        example: this is an example description
+        type: string
+      title:
+        example: example-title
+        type: string
+    required:
+    - author
+    - description
+    - title
+    type: object
+  types.AddBookResponse:
+    properties:
+      id:
+        example: 1
+        type: integer
+    type: object
+  types.Book:
+    properties:
+      author:
+        example: John Doe
+        type: string
+      description:
+        example: this is an example description
+        type: string
+      id:
+        example: 1
+        type: integer
+      title:
+        example: example-title
+        type: string
+    required:
+    - author
+    - description
+    - title
+    type: object
+  types.DeleteBookResponse:
+    type: object
+  types.GetBooksResponse:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/types.Book'
+        type: array
+      pagination:
+        $ref: '#/definitions/db.Pagination'
+    type: object
+  types.UpdateBookRequest:
+    properties:
+      author:
+        example: John Doe
+        type: string
+      description:
+        example: this is an example description
+        type: string
+      title:
+        example: example-title
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /books:
+    get:
+      operationId: get-books
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Limit per page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: order of items to be sorted (by id)
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetBooksResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: get list of books' information from the system
+    post:
+      operationId: add-book
+      parameters:
+      - description: Book information that needs to be added
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddBookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.AddBookResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: add book into the system
+  /books/{id}:
+    delete:
+      operationId: delete-book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteBookResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: delete book id from the system
+    get:
+      operationId: get-book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Book'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: get book information from given id
+    put:
+      operationId: add-book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Book information that needs to be updated
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Book'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: update book information in the system with the given id
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

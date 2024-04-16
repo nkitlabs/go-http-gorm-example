@@ -48,12 +48,12 @@ func TestWrapError(t *testing.T) {
 func TestPanicWrappedErr(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
-			assert.Equal(t, "test panic", r.(error).Error())
+			assert.Equal(t, "wrapped error: test panic", r.(error).Error())
 		}
 	}()
 
 	err := apierror.NewError(400, "test panic")
-	err.Wrap("wrapped error")
+	newErr := err.Wrap("wrapped error")
 
-	panic(err)
+	panic(newErr)
 }

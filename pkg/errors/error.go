@@ -5,7 +5,9 @@ import (
 )
 
 var (
-	ErrInternal = NewError(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+	ErrInternal     = NewError(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+	ErrInvalidInput = NewError(http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+	ErrNotFound     = NewError(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 )
 
 type Error struct {
@@ -15,6 +17,15 @@ type Error struct {
 
 func NewError(code int, message string) *Error {
 	return &Error{Code: code, Message: message}
+}
+
+func NewNotFoundError(message string) *Error {
+	return ErrNotFound.WithMessage(message)
+}
+
+func (e *Error) WithMessage(message string) *Error {
+	e.Message = message
+	return e
 }
 
 // ToError converts an error to an Error object.
@@ -78,8 +89,8 @@ func (e *Error) Is(err error) bool {
 
 // Wrap extends this error with an additional information. It's a handy function to call
 // Wrap with this errors package.
-func (e *Error) Wrap(msg string) error { return Wrap(e, msg) }
+func (e Error) Wrap(msg string) error { return Wrap(e, msg) }
 
 // Wrapf extends this error with an additional information. It's a handy function to call
 // Wrapf with this errors package.
-func (e *Error) Wrapf(desc string, args ...interface{}) error { return Wrapf(e, desc, args...) }
+func (e Error) Wrapf(desc string, args ...interface{}) error { return Wrapf(e, desc, args...) }
