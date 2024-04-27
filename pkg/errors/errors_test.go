@@ -27,7 +27,7 @@ func TestToError(t *testing.T) {
 		},
 		{
 			name: "testNormalErrorObject",
-			in:   *ref_err,
+			in:   ref_err,
 			out:  expected_err,
 		},
 		{

@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -10,6 +11,7 @@ import (
 	_ "github.com/nkitlabs/go-http-gorm-example/docs"
 	"github.com/nkitlabs/go-http-gorm-example/pkg/books/types"
 	"github.com/nkitlabs/go-http-gorm-example/pkg/db"
+	apierror "github.com/nkitlabs/go-http-gorm-example/pkg/errors"
 	"github.com/nkitlabs/go-http-gorm-example/pkg/response"
 )
 
@@ -129,9 +131,12 @@ func (h Handler) AddBook(w http.ResponseWriter, r *http.Request) {
 // @Router /books/{id} [delete]
 func (h Handler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	// Read the dynamic id parameter
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 0)
+	pathID := r.PathValue("id")
+	id, err := strconv.ParseInt(pathID, 10, 0)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		h.log.Error(fmt.Sprintf("%s; invalid id %s", err.Error(), pathID))
+		newErr := apierror.ErrInvalidInput.WithMessage(fmt.Sprintf("invalid id: %s", r.PathValue("id")))
+		response.WriteError(w, newErr, h.log)
 		return
 	}
 
@@ -156,9 +161,12 @@ func (h Handler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 // @Router /books/{id} [put]
 func (h Handler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	// Read the dynamic id parameter
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 0)
+	pathID := r.PathValue("id")
+	id, err := strconv.ParseInt(pathID, 10, 0)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		h.log.Error(fmt.Sprintf("%s; invalid id %s", err.Error(), pathID))
+		newErr := apierror.ErrInvalidInput.WithMessage(fmt.Sprintf("invalid id: %s", r.PathValue("id")))
+		response.WriteError(w, newErr, h.log)
 		return
 	}
 

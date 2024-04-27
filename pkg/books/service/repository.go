@@ -11,18 +11,8 @@ import (
 )
 
 var (
-	_ DataProvider = &Repository{}
+	_ types.DataProvider = &Repository{}
 )
-
-// DataProvider is the interface for the data provider for a books service
-type DataProvider interface {
-	CreateBook(book types.Book) (types.Book, error)
-	UpdateBook(book *types.Book) error
-	DeleteBook(book *types.Book) error
-
-	GetBooks(page int, limit int, sortType db.SortType) (*db.Pagination, []types.Book, error)
-	GetBook(id int) (*types.Book, error)
-}
 
 // Repository is the data provider that connect to the database being used in a books service.
 type Repository struct {

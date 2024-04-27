@@ -14,12 +14,12 @@ import (
 
 // Service is the service layer for books
 type Service struct {
-	dataProvider DataProvider
+	dataProvider types.DataProvider
 	log          *zap.Logger
 }
 
 // NewService creates a new books service
-func NewService(d DataProvider, log *zap.Logger) Service {
+func NewService(d types.DataProvider, log *zap.Logger) Service {
 	return Service{
 		dataProvider: d,
 		log:          log,
@@ -52,9 +52,7 @@ func (s *Service) AddBook(req types.AddBookRequest) (types.AddBookResponse, erro
 // UpdateBook updates a book information in the system
 func (s *Service) UpdateBook(id int, req types.UpdateBookRequest) (types.Book, error) {
 	book, err := s.GetBook(id)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return types.Book{}, apierror.NewNotFoundError("book not found")
-	} else if err != nil {
+	if err != nil {
 		return types.Book{}, err
 	}
 
@@ -83,9 +81,7 @@ func (s *Service) UpdateBook(id int, req types.UpdateBookRequest) (types.Book, e
 // DeleteBook deletes a book id from the system
 func (s *Service) DeleteBook(id int) (types.DeleteBookResponse, error) {
 	book, err := s.GetBook(id)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return types.DeleteBookResponse{}, apierror.NewNotFoundError("book not found")
-	} else if err != nil {
+	if err != nil {
 		return types.DeleteBookResponse{}, err
 	}
 

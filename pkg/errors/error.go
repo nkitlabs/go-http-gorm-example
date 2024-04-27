@@ -24,8 +24,11 @@ func NewNotFoundError(message string) *Error {
 }
 
 func (e *Error) WithMessage(message string) *Error {
-	e.Message = message
-	return e
+	newErr := Error{
+		Message: message,
+		Code:    e.Code,
+	}
+	return &newErr
 }
 
 // ToError converts an error to an Error object.
