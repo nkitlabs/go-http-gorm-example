@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/go-playground/validator/v10 v10.19.0
+	github.com/google/uuid v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4

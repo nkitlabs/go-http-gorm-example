@@ -12,6 +12,7 @@ import (
 	booktypes "github.com/nkitlabs/go-http-gorm-example/pkg/books/types"
 	"github.com/nkitlabs/go-http-gorm-example/pkg/config"
 	dbstore "github.com/nkitlabs/go-http-gorm-example/pkg/db"
+	"github.com/nkitlabs/go-http-gorm-example/pkg/middleware"
 )
 
 // @title           Swagger Example API
@@ -74,7 +75,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: middleware.Wraps(router, logger),
 	}
 	logger.Info("Listening...")
 

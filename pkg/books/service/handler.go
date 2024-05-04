@@ -45,20 +45,21 @@ func InitializeRoutes(mux *http.ServeMux, h Handler) *http.ServeMux {
 // @Router /books/{id} [get]
 func (h Handler) GetBook(w http.ResponseWriter, r *http.Request) {
 	// Read the dynamic id parameter
+	ctx := r.Context()
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 0)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
 	// Find book by Id
 	book, err := h.serv.GetBook(int(id))
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
-	response.Write(w, http.StatusOK, book, h.log)
+	response.Write(ctx, w, http.StatusOK, book, h.log)
 }
 
 // @Summary get list of books' information from the system
@@ -71,16 +72,18 @@ func (h Handler) GetBook(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} errors.Error
 // @Router /books [get]
 func (h Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	// Get page and limit from params and convert to int
 	page, err := strconv.ParseInt(r.URL.Query().Get("page"), 10, 0)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
 	limit, err := strconv.ParseInt(r.URL.Query().Get("limit"), 10, 0)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
@@ -88,11 +91,11 @@ func (h Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
 
 	result, err := h.serv.GetBooks(int(page), int(limit), sortType)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
-	response.Write(w, http.StatusOK, result, h.log)
+	response.Write(ctx, w, http.StatusOK, result, h.log)
 }
 
 // @Summary add book into the system
@@ -103,22 +106,24 @@ func (h Handler) GetBooks(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} errors.Error
 // @Router /books [post]
 func (h Handler) AddBook(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	// Read to request body
 	var req types.AddBookRequest
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
 	// Append to the Books table
 	resp, err := h.serv.AddBook(req)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
-	response.Write(w, http.StatusCreated, resp, h.log)
+	response.Write(ctx, w, http.StatusCreated, resp, h.log)
 }
 
 // @Summary delete book id from the system
@@ -130,24 +135,25 @@ func (h Handler) AddBook(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} errors.Error
 // @Router /books/{id} [delete]
 func (h Handler) DeleteBook(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	// Read the dynamic id parameter
 	pathID := r.PathValue("id")
 	id, err := strconv.ParseInt(pathID, 10, 0)
 	if err != nil {
-		h.log.Error(fmt.Sprintf("%s; invalid id %s", err.Error(), pathID))
 		newErr := apierror.ErrInvalidInput.WithMessage(fmt.Sprintf("invalid id: %s", r.PathValue("id")))
-		response.WriteError(w, newErr, h.log)
+		response.WriteError(ctx, w, newErr, h.log)
 		return
 	}
 
 	// Find the book by Id
 	result, err := h.serv.DeleteBook(int(id))
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
-	response.Write(w, http.StatusOK, result, h.log)
+	response.Write(ctx, w, http.StatusOK, result, h.log)
 }
 
 // @Summary update book information in the system with the given id
@@ -160,13 +166,14 @@ func (h Handler) DeleteBook(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} errors.Error
 // @Router /books/{id} [put]
 func (h Handler) UpdateBook(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	// Read the dynamic id parameter
 	pathID := r.PathValue("id")
 	id, err := strconv.ParseInt(pathID, 10, 0)
 	if err != nil {
-		h.log.Error(fmt.Sprintf("%s; invalid id %s", err.Error(), pathID))
 		newErr := apierror.ErrInvalidInput.WithMessage(fmt.Sprintf("invalid id: %s", r.PathValue("id")))
-		response.WriteError(w, newErr, h.log)
+		response.WriteError(ctx, w, newErr, h.log)
 		return
 	}
 
@@ -174,15 +181,15 @@ func (h Handler) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var req types.UpdateBookRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
 	result, err := h.serv.UpdateBook(int(id), req)
 	if err != nil {
-		response.WriteError(w, err, h.log)
+		response.WriteError(ctx, w, err, h.log)
 		return
 	}
 
-	response.Write(w, http.StatusOK, result, h.log)
+	response.Write(ctx, w, http.StatusOK, result, h.log)
 }
