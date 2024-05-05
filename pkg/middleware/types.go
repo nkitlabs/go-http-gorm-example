@@ -1,7 +1,9 @@
 package middleware
 
+type ContextKey string
+
 const (
-	ContextKeyRequestID = "request_id"
+	ContextKeyRequestID = ContextKey("request_id")
 	RequestIDUnknown    = "unknown"
 
 	LogKeyStatus   = "status"

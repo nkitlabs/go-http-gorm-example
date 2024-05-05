@@ -1,5 +1,5 @@
 database_connection:
-  host: localhost
+  host: example_dev_postgres
   port: 5432
   username: admin
   password: admin

@@ -12,3 +12,19 @@ services:
       - 5432:5432
     volumes:
       - ./db:/var/lib/postgresql/data
+    networks:
+      - go-http-gorm-example
+
+  app:
+    build: .
+    container_name: example_dev_go_http_gorm
+    environment:
+      - CONFIG_FILE=config.dev.yaml
+    ports:
+      - 8080:8080
+    networks:
+      - go-http-gorm-example
+
+networks:
+  go-http-gorm-example:
+    driver: bridge

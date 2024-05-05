@@ -42,7 +42,7 @@ func ReadConfig(filename string) (Config, error) {
 
 	viper.SetConfigType(ext)
 	viper.SetConfigName(name)
-	viper.AddConfigPath("./deployment/configs/")
+	viper.AddConfigPath("./configs/")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 
