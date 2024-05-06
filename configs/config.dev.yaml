@@ -4,3 +4,6 @@ database_connection:
   username: admin
   password: admin
   database_name: example_dev
+
+app:
+  port: 8080

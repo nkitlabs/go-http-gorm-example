@@ -16,9 +16,14 @@ type DBConn struct {
 	DBName   string `yaml:"db_name" mapstructure:"database_name"`
 }
 
+type App struct {
+	Port string `yaml:"port" mapstructure:"port"`
+}
+
 // Config represents the configuration of the application.
 type Config struct {
 	Conn DBConn `yaml:"database_connection" mapstructure:"database_connection"`
+	App  App    `yaml:"app" mapstructure:"app"`
 }
 
 // splitFilename splits the filename into name and extension.

@@ -74,7 +74,7 @@ func main() {
 	router.HandleFunc("GET /api/v1/swagger/", httpSwagger.WrapHandler)
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    conf.App.Port,
 		Handler: middleware.Wraps(router, logger),
 	}
 	logger.Info("Listening...")
